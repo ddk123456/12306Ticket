@@ -18,7 +18,12 @@
                 // Ajax发送请求
                 request=new XMLHttpRequest();
                 request.onreadystatechange=callBack;//callBack：回调函数
-                request.open("GET","https://kyfw.12306.cn/otn/leftTicket/query?leftTicketDTO.train_date=2023-05-09&leftTicketDTO.from_station=GLZ&leftTicketDTO.to_station=GZQ&purpose_codes=ADULT");
+                /*
+                把起始站、到达站、出发日期输入框的value取到
+                 */
+                var fromStation=document.getElementById("fromStation").value;//拿到起始站
+
+                request.open("GET","/searchTicket?fromStation="+fromStation+"&toStation=广州&departureDate=2023-05-18");
                 request.send(null);
             }
         }
@@ -28,16 +33,11 @@
     </script>
 </head>
 <body>
-<!--请求类：用的最多的是get和post-->
-
-<form action="/searchTicket" method="post">
-
     <label for="fromStation">起始站：</label> <input type="text" id="fromStation" name="fromStation">
     <label for="toStation">到达站：</label> <input type="text" id="toStation" name="toStation">
     <label for="departureDate">出发日期：</label> <input type="date" id="departureDate" name="departureDate">
 
-    <button id="search" type="submit">查询</button>
-</form>
+    <button id="search">查询</button>
 
     <table>
         <tr>

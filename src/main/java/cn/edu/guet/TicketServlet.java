@@ -29,8 +29,11 @@ public class TicketServlet extends HttpServlet {
          */
 
         String fromStation = request.getParameter("fromStation");
+        System.out.println(fromStation);
         String toStation = request.getParameter("toStation");
+        System.out.println(toStation);
         String departureDate = request.getParameter("departureDate");
+        System.out.println(departureDate);
 
         String allTickets=TicketSearch.search(fromStation,toStation,departureDate);
 
