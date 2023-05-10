@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>12306余票查询</title>
+    <style>
+        table,tr,th{
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+    </style>
+    <script>
+        window.onload=function(){
+            document.getElementById("search").onclick=function(){
+                console.log("即将进行余票查询")
+                // Ajax发送请求
+                request=new XMLHttpRequest();
+                request.onreadystatechange=callBack;//callBack：回调函数
+                request.open("GET","https://kyfw.12306.cn/otn/leftTicket/query?leftTicketDTO.train_date=2023-05-09&leftTicketDTO.from_station=GLZ&leftTicketDTO.to_station=GZQ&purpose_codes=ADULT");
+                request.send(null);
+            }
+        }
+        function callBack(){
+            console.log("回调处理")
+        }
+    </script>
+</head>
+<body>
+<!--请求类：用的最多的是get和post-->
+
+<form action="/searchTicket" method="post">
+
+    <label for="fromStation">起始站：</label> <input type="text" id="fromStation" name="fromStation">
+    <label for="toStation">到达站：</label> <input type="text" id="toStation" name="toStation">
+    <label for="departureDate">出发日期：</label> <input type="date" id="departureDate" name="departureDate">
+
+    <button id="search" type="submit">查询</button>
+</form>
+
+    <table>
+        <tr>
+            <th>车次</th>
+            <th>出发站<br>到达站</th>
+            <th>出发时间<br>到达时间</th>
+            <th>历时</th>
+            <th>商务座<br>特等座</th>
+        </tr>
+    </table>
+
+    <!-- 给查询按钮添加点击事件 -->
+</body>
+</html>
