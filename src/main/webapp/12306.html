@@ -6,49 +6,100 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>12306余票查询</title>
     <style>
-        table,tr,th{
+        table, tr, th, td {
             border: 1px solid black;
             border-collapse: collapse;
         }
     </style>
     <script>
-        window.onload=function(){
-            document.getElementById("search").onclick=function(){
+        window.onload = function () {
+            document.getElementById("search").onclick = function () {
                 console.log("即将进行余票查询")
                 // Ajax发送请求
-                request=new XMLHttpRequest();
-                request.onreadystatechange=callBack;//callBack：回调函数
+                request = new XMLHttpRequest();
+                request.onreadystatechange = callBack;//callBack：回调函数
                 /*
                 把起始站、到达站、出发日期输入框的value取到
                  */
-                var fromStation=document.getElementById("fromStation").value;//拿到起始站
+                var fromStation = document.getElementById("fromStation").value;//拿到起始站
 
-                request.open("GET","/searchTicket?fromStation="+fromStation+"&toStation=广州&departureDate=2023-05-18");
+                var toStation = document.getElementById('toStation').value;
+
+                var departureDate = document.getElementById("departureDate").value;
+
+                request.open("GET", "/searchTicket?fromStation=" + fromStation + "&toStation=" + toStation + "&departureDate=" + departureDate);
                 request.send(null);
             }
         }
-        function callBack(){
-            console.log("回调处理")
+
+        function callBack() {
+            console.log("回调处理");
+
+            if (request.readyState == 4) {
+                if (request.status == 200) {
+                    //说明服务器正常响应
+                    console.log("服务器返回的车次数据：", request.responseText);
+                    var trainData = JSON.parse(request.responseText);//把JSON文本转换为JavaScript的对象
+                    // console.log(trainData.constructor.toString());
+                    /*
+                    循环把每个车次的信息放入table（表格中）
+                     */
+                    for (var i = 0; i < trainData.length; i++) {
+                        var train = trainData[i];//1个车次的数据对象
+
+                        //每循环一次，要创建1个tr，4个td以及6个文本节点，最后还有2个br元素
+
+                        brNode = document.createElement("br");
+
+                        trainNumberTd = document.createElement("td");//创建车次的td元素
+                        trainNumberTd.appendChild(document.createTextNode(train.trainNumber));
+
+                        startStationTd = document.createElement("td");//创建车次的td元素
+                        startStationTd.appendChild(document.createTextNode(train.startStation));
+                        startStationTd.appendChild(brNode);
+                        startStationTd.appendChild(document.createTextNode(train.endStation));
+
+                        departureTimeTd = document.createElement("td");//创建车次的td元素
+                        departureTimeTd.appendChild(document.createTextNode(train.departureTime));
+                        departureTimeTd.appendChild(brNode)
+                        departureTimeTd.appendChild(document.createTextNode(train.arrivalTime));
+
+                        durationTd = document.createElement("td");//创建车次的td元素
+                        durationTd.appendChild(document.createTextNode(train.duration));
+
+                        // 上面4个TD隶属于同1个tr
+
+                        var trainTR = document.createElement("tr");
+                        trainTR.appendChild(trainNumberTd);
+                        trainTR.appendChild(startStationTd);
+                        trainTR.appendChild(departureTimeTd);
+                        trainTR.appendChild(durationTd);
+                        // table已经存在，只需获取
+                        document.getElementById("train").appendChild(trainTR);
+                    }
+                } else {
+                    console.log("服务器出错了，状态码：", request.status);
+                }
+            }
         }
     </script>
 </head>
 <body>
-    <label for="fromStation">起始站：</label> <input type="text" id="fromStation" name="fromStation">
-    <label for="toStation">到达站：</label> <input type="text" id="toStation" name="toStation">
-    <label for="departureDate">出发日期：</label> <input type="date" id="departureDate" name="departureDate">
+<label for="fromStation">起始站：</label> <input type="text" id="fromStation" name="fromStation">
+<label for="toStation">到达站：</label> <input type="text" id="toStation" name="toStation">
+<label for="departureDate">出发日期：</label> <input type="date" id="departureDate" name="departureDate">
 
-    <button id="search">查询</button>
+<button id="search">查询</button>
 
-    <table>
-        <tr>
-            <th>车次</th>
-            <th>出发站<br>到达站</th>
-            <th>出发时间<br>到达时间</th>
-            <th>历时</th>
-            <th>商务座<br>特等座</th>
-        </tr>
-    </table>
+<table id="train">
+    <tr>
+        <th>车次</th>
+        <th>出发站<br>到达站</th>
+        <th>出发时间<br>到达时间</th>
+        <th>历时</th>
+    </tr>
+</table>
 
-    <!-- 给查询按钮添加点击事件 -->
+<!-- 给查询按钮添加点击事件 -->
 </body>
 </html>
